@@ -343,3 +343,26 @@ You'll know BraveBlock is working when:
 - Popup shows "Protection Active"
 
 Happy ad-free browsing! 🎊
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### 🆓 What This Means
+
+- ✅ **Free to use** - Personal and commercial use allowed
+- ✅ **Free to modify** - Change the code however you want
+- ✅ **Free to distribute** - Share your modified versions
+- ✅ **Free to sell** - Use in commercial products
+- ⚠️ **No warranty** - Use at your own risk
+- 📝 **Attribution required** - Keep the copyright notice
+
+### 🤝 License Compatibility
+
+The MIT License is compatible with:
+- Other open source projects
+- Commercial software
+- GPL-licensed projects (one-way compatibility)
+- Most other permissive licenses
+
+This makes BraveBlock easy to integrate into other projects while keeping it completely free and open source!
