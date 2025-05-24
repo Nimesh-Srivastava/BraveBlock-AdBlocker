@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 350px;
+      min-height: 400px;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+      color: white;
+    }
+
+    .header {
+      padding: 20px;
+      text-align: center;
+      background: rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .stats {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .blocked-count {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .blocked-label {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .controls {
+      padding: 0 20px 20px;
+    }
+
+    .toggle-btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 25px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 10px;
+    }
+
+    .toggle-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+
+    .toggle-btn.disabled {
+      background: rgba(0,0,0,0.3);
+      border-color: rgba(0,0,0,0.3);
+      opacity: 0.6;
+    }
+
+    .whitelist-section {
+      background: rgba(255,255,255,0.1);
+      margin: 10px 20px;
+      border-radius: 15px;
+      padding: 15px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .whitelist-controls {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .whitelist-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 15px;
+      font-size: 12px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+    }
+
+    .add-btn {
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.2);
+      border: none;
+      border-radius: 15px;
+      color: white;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .add-btn:hover {
+      background: rgba(0,0,0,0.3);
+    }
+
+    .whitelist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.2);
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+
+    .remove-btn {
+      background: rgba(255,0,0,0.3);
+      border: none;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 10px;
+    }
+
+    .footer {
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 11px;
+      opacity: 0.7;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .status {
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 12px;
+      background: rgba(0,0,0,0.1);
+    }
+
+    .status.enabled {
+      background: rgba(0,255,0,0.2);
+    }
+
+    .status.disabled {
+      background: rgba(255,0,0,0.2);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🛡️ BraveBlock</div>
+    <div class="subtitle">Advanced Ad Blocker</div>
+  </div>
+
+  <div class="stats">
+    <div class="blocked-count" id="blockedCount">
+      <span class="loading"></span>
+    </div>
+    <div class="blocked-label">Ads Blocked</div>
+  </div>
+
+  <div class="status" id="status">
+    <span class="loading"></span> Loading...
+  </div>
+
+  <div class="controls">
+    <button class="toggle-btn" id="toggleBtn">
+      <span class="loading"></span> Loading...
+    </button>
+  </div>
+
+  <div class="whitelist-section">
+    <div class="section-title">🏳️ Whitelist Sites</div>
+    <div class="whitelist-controls">
+      <input type="text" class="whitelist-input" id="whitelistInput" 
+             placeholder="Enter domain (e.g., example.com)">
+      <button class="add-btn" id="addBtn">Add</button>
+    </div>
+    <div id="whitelistItems"></div>
+  </div>
+
+  <div class="footer">
+    Free & Open Source • Inspired by Brave Browser
+  </div>
+
+  <script>
+    class PopupController {
+      constructor() {
+        this.stats = {
+          blockedCount: 0,
+          isEnabled: true,
+          whitelist: []
+        };
+        this.init();
+      }
+
+      async init() {
+        await this.loadStats();
+        this.setupEventListeners();
+        this.updateUI();
+      }
+
+      async loadStats() {
+        try {
+          const response = await chrome.runtime.sendMessage({ action: 'getStats' });
+          this.stats = response;
+        } catch (error) {
+          console.error('Failed to load stats:', error);
+        }
+      }
+
+      setupEventListeners() {
+        document.getElementById('toggleBtn').addEventListener('click', () => {
+          this.toggleBlocking();
+        });
+
+        document.getElementById('addBtn').addEventListener('click', () => {
+          this.addToWhitelist();
+        });
+
+        document.getElementById('whitelistInput').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            this.addToWhitelist();
+          }
+        });
+      }
+
+      updateUI() {
+        // Update blocked count
+        document.getElementById('blockedCount').textContent = this.stats.blockedCount.toLocaleString();
+
+        // Update status
+        const statusEl = document.getElementById('status');
+        if (this.stats.isEnabled) {
+          statusEl.textContent = '✅ Protection Active';
+          statusEl.className = 'status enabled';
+        } else {
+          statusEl.textContent = '❌ Protection Disabled';
+          statusEl.className = 'status disabled';
+        }
+
+        // Update toggle button
+        const toggleBtn = document.getElementById('toggleBtn');
+        if (this.stats.isEnabled) {
+          toggleBtn.textContent = '⏸️ Disable Blocking';
+          toggleBtn.className = 'toggle-btn';
+        } else {
+          toggleBtn.textContent = '▶️ Enable Blocking';
+          toggleBtn.className = 'toggle-btn disabled';
+        }
+
+        // Update whitelist
+        this.updateWhitelistUI();
+      }
+
+      updateWhitelistUI() {
+        const container = document.getElementById('whitelistItems');
+        container.innerHTML = '';
+
+        this.stats.whitelist.forEach(domain => {
+          const item = document.createElement('div');
+          item.className = 'whitelist-item';
+          item.innerHTML = `
+            <span>${domain}</span>
+            <button class="remove-btn" data-domain="${domain}">Remove</button>
+          `;
+          container.appendChild(item);
+        });
+
+        // Add event listeners for remove buttons
+        container.querySelectorAll('.remove-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            this.removeFromWhitelist(e.target.dataset.domain);
+          });
+        });
+      }
+
+      async toggleBlocking() {
+        const toggleBtn = document.getElementById('toggleBtn');
+        toggleBtn.innerHTML = '<span class="loading"></span> Updating...';
+        
+        try {
+          const response = await chrome.runtime.sendMessage({ action: 'toggleBlocking' });
+          this.stats.isEnabled = response.isEnabled;
+          this.updateUI();
+        } catch (error) {
+          console.error('Failed to toggle blocking:', error);
+          toggleBtn.textContent = 'Error - Try Again';
+        }
+      }
+
+      async addToWhitelist() {
+        const input = document.getElementById('whitelistInput');
+        const domain = input.value.trim().toLowerCase();
+        
+        if (!domain) return;
+
+        // Validate domain format
+        if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)) {
+          alert('Please enter a valid domain (e.g., example.com)');
+          return;
+        }
+
+        try {
+          await chrome.runtime.sendMessage({ 
+            action: 'addToWhitelist', 
+            domain: domain 
+          });
+          
+          this.stats.whitelist.push(domain);
+          input.value = '';
+          this.updateWhitelistUI();
+        } catch (error) {
+          console.error('Failed to add to whitelist:', error);
+        }
+      }
+
+      async removeFromWhitelist(domain) {
+        try {
+          await chrome.runtime.sendMessage({ 
+            action: 'removeFromWhitelist', 
+            domain: domain 
+          });
+          
+          this.stats.whitelist = this.stats.whitelist.filter(d => d !== domain);
+          this.updateWhitelistUI();
+        } catch (error) {
+          console.error('Failed to remove from whitelist:', error);
+        }
+      }
+    }
+
+    // Initialize popup when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      new PopupController();
+    });
+  </script>
+</body>
+</html>
