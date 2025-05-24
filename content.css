@@ -1,0 +1,8 @@
+/* BraveBlock Content Styles - Hide ads and tracking elements */
+
+/* Generic ad blocking selectors */
+[class*="ad-"],
+[id*="ad-"],
+[class*="ads-"],
+[id*="ads-"],
+[class*="advertisement"],
