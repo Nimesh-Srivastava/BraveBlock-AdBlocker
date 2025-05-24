@@ -6,3 +6,90 @@
 [class*="ads-"],
 [id*="ads-"],
 [class*="advertisement"],
+.banner-ad,
+.ad-banner,
+.google-ad,
+.googlesyndication,
+[data-ad-name],
+[data-ad-slot],
+.sponsored,
+.promotion,
+iframe[src*="googleads"],
+iframe[src*="googlesyndication"],
+div[id*="google_ads"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    pointer-events: none !important;
+}
+
+/* YouTube specific ad blocking */
+.ytp-ad-overlay-container,
+.ytp-ad-text-overlay,
+.ytp-ad-player-overlay,
+.video-ads,
+.ytd-promoted-sparkles-web-renderer,
+.ytd-ad-slot-renderer,
+.ytd-banner-promo-renderer,
+.ytd-video-masthead-ad-v3-renderer,
+.ytd-primetime-promo-renderer,
+ytd-promoted-video-renderer,
+ytd-compact-promoted-video-renderer,
+.ytd-display-ad-renderer,
+[data-ad-slot-id],
+.googima-ad-div,
+#secondary .ytd-promoted-sparkles-web-renderer,
+#secondary .ytd-compact-promoted-video-renderer,
+.ytd-shelf-renderer[data-ad-slot-id],
+.ytd-item-section-renderer .ytd-promoted-sparkles-web-renderer {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* Social media ads */
+[data-testid*="sponsor"],
+[aria-label*="Sponsored"],
+.sponsored-post,
+.promoted-tweet,
+div[data-ad-preview] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Common ad networks */
+.outbrain,
+.taboola,
+.criteo,
+[class*="amazon-ad"],
+[class*="facebook-ad"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Pop-up and overlay ads */
+.popup-ad,
+.overlay-ad,
+.interstitial,
+[class*="modal"][class*="ad"] {
+    display: none !important;
+    visibility: hidden !important;
+    z-index: -1 !important;
+}
+
+/* Tracking pixels and beacons */
+img[width="1"][height="1"],
+img[style*="width:1px"],
+img[style*="height:1px"],
+.tracking-pixel {
+    display: none !important;
+    visibility: hidden !important;
+}
